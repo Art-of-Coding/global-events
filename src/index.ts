@@ -7,6 +7,7 @@ export interface Options {
   connection: Redis,
   prefix?: string,
   msgpackr?: PackrOptions,
+  autoSubscribe?: boolean,
 }
 
 export default class GlobalEvents extends EventEmitter {
@@ -16,6 +17,7 @@ export default class GlobalEvents extends EventEmitter {
   private readonly subscriber: Redis
   private readonly packr: Packr
   private readonly unpackr: Unpackr
+  private subscribed = false
 
   public constructor(opts: Options) {
     super()
@@ -26,9 +28,11 @@ export default class GlobalEvents extends EventEmitter {
 
     if (opts.prefix) this.prefix = opts.prefix
 
-    this.subscribe().catch(() => {
-      super.emit('error', new Error('Unable to subscribe'))
-    })
+    if (typeof opts.autoSubscribe === 'undefined' || opts.autoSubscribe === true) {
+      this.subscribe().catch(() => {
+        super.emit('error', new Error('Unable to subscribe'))
+      })
+    }
   }
 
   public emit(event: string, data?: any, opts: { excludePublish?: boolean, excludeLocal?: boolean } = {}): boolean {
@@ -44,7 +48,9 @@ export default class GlobalEvents extends EventEmitter {
     return true
   }
 
-  private async subscribe(): Promise<void> {
+  public async subscribe(): Promise<void> {
+    if (this.subscribed) return
+
     this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
       const channel = channelBuf.toString('utf-8')
       const event = channel.substring(this.prefix.length + 7)
@@ -52,5 +58,6 @@ export default class GlobalEvents extends EventEmitter {
     })
 
     await this.subscriber.psubscribe(`${this.prefix}events:*`)
+    this.subscribed = true
   }
 }
