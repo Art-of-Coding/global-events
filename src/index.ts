@@ -28,6 +28,12 @@ export default class GlobalEvents extends EventEmitter {
 
     if (opts.prefix) this.prefix = opts.prefix
 
+    this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
+      const channel = channelBuf.toString('utf-8')
+      const event = channel.substring(this.prefix.length + 7)
+      super.emit(event, this.unpackr.unpack(messageBuf))
+    })
+
     if (typeof opts.autoSubscribe === 'undefined' || opts.autoSubscribe === true) {
       this.subscribe().catch(() => {
         super.emit('error', new Error('Unable to subscribe'))
@@ -50,14 +56,6 @@ export default class GlobalEvents extends EventEmitter {
 
   public async subscribe(): Promise<void> {
     if (this.subscribed) return
-
-    if (!this.subscriber.listenerCount('messageBuffer')) {
-      this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
-        const channel = channelBuf.toString('utf-8')
-        const event = channel.substring(this.prefix.length + 7)
-        super.emit(event, this.unpackr.unpack(messageBuf))
-      })
-    }
 
     await this.subscriber.psubscribe(`${this.prefix}events:*`)
     this.subscribed = true
