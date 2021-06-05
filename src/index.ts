@@ -51,7 +51,7 @@ export default class GlobalEvents extends EventEmitter {
   public async subscribe(): Promise<void> {
     if (this.subscribed) return
 
-    if (!this.listenerCount('messageBuffer')) {
+    if (!this.subscriber.listenerCount('messageBuffer')) {
       this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
         const channel = channelBuf.toString('utf-8')
         const event = channel.substring(this.prefix.length + 7)
