@@ -32,6 +32,12 @@ const events = new GlobalEvents({
   msgpackr: { structuredClone: true },
 });
 
+// Listen for an event
+// This event could have been emitted locally or remotely
+events.on("expected-event", (expectedData: any) => {
+  // do something with the data
+});
+
 // Emit an event
 events.emit("some-event");
 
