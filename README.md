@@ -1,7 +1,7 @@
 # Global Events
 
 Global Events uses Redis and its publish/subscribe mechanism to provide
-cross-system events. It is built on to of (or, rather, into) node's default
+cross-system events. It is built on top of (or, rather, into) node's default
 `EventEmitter`.
 
 ## Features
