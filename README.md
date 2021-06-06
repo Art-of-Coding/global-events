@@ -45,9 +45,9 @@ const events = new GlobalEvents({
 });
 
 // Listen for an event
-// This event could have been emitted locally or remotely
-events.on("expected-event", (expectedData: any) => {
-  // do something with the data
+events.on("expected-event", (data: MyDataInterface, origin: string) => {
+  // `data` is the event data if the event had a data payload
+  // `origin` is either 'local' (emitted locally), or 'remote' (emitter remotely)
 });
 
 // Emit an event
