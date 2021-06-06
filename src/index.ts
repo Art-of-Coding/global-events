@@ -11,7 +11,7 @@ export interface Options {
 }
 
 export default class GlobalEvents extends EventEmitter {
-  public readonly  prefix: string = ''
+  public readonly prefix: string = 'global-'
 
   private readonly connection: Redis
   private readonly subscriber: Redis
@@ -25,7 +25,10 @@ export default class GlobalEvents extends EventEmitter {
     this.subscriber = opts.connection.duplicate()
     this.packr = new Packr(opts.msgpackr)
     this.unpackr = new Unpackr(opts.msgpackr)
-    this.prefix = opts.prefix ?? 'global-'
+
+    if (opts.prefix) {
+      this.prefix = opts.prefix
+    }
 
     this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
       const channel = channelBuf.toString('utf-8')
