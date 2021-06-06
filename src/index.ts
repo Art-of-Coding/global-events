@@ -31,7 +31,7 @@ export default class GlobalEvents extends EventEmitter {
     this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
       const channel = channelBuf.toString('utf-8')
       const event = channel.substring(this.prefix.length + 7)
-      super.emit(event, this.unpackr.unpack(messageBuf))
+      super.emit(event, this.unpackr.unpack(messageBuf), 'remote')
     })
 
     if (typeof opts.autoSubscribe === 'undefined' || opts.autoSubscribe === true) {
@@ -48,7 +48,7 @@ export default class GlobalEvents extends EventEmitter {
     }
 
     if (!opts.excludeLocal) {
-      super.emit(event, data)
+      super.emit(event, data, 'local')
     }
 
     return true
