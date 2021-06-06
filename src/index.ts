@@ -25,8 +25,7 @@ export default class GlobalEvents extends EventEmitter {
     this.subscriber = opts.connection.duplicate()
     this.packr = new Packr(opts.msgpackr)
     this.unpackr = new Unpackr(opts.msgpackr)
-
-    if (opts.prefix) this.prefix = opts.prefix
+    this.prefix = opts.prefix ?? 'global-'
 
     this.subscriber.on('messageBuffer', (channelBuf: Buffer, messageBuf: Buffer) => {
       const channel = channelBuf.toString('utf-8')
