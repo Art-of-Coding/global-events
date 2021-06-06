@@ -15,7 +15,6 @@ Global Events is built on top of (or rather, _into_) node's native
   - Data payloads are serialized by
     [msgpackr](https://github.com/kriszyp/msgpackr) for lightning-fast,
     light-weight payloads
-- Ability to emit an event locally only, or remotely only
 
 ## Install
 
@@ -42,35 +41,22 @@ const events = new GlobalEvents({
   // Optional msgpackr configuration
   // See https://github.com/kriszyp/msgpackr#options
   msgpackr: { useRecords: true },
-  // Auto-subscribe (defaults to true)
-  // If false, you need to call subscribe() yourself
-  autoSubscribe: true,
 });
 
-// Subscribe manually
-await events.subscribe();
-
 // Listen for an event
-events.on("expected-event", (data: MyDataInterface, origin: string) => {
+// Will automatically subscribe to the event if no subscription is open yet
+events.on("expected-event", (data: MyDataInterface) => {
   // `data` is the event data if the event had a data payload
-  // `origin` is either 'local' (emitted locally), or 'remote' (emitted remotely)
 });
 
 // Emit an event
 events.emit("some-event");
 
+// Emit an async event
+await events.emitAsync("async-event");
+
 // Emit an event with some data
 events.emit("another-event", { some: "data" });
-
-// Emit an event only locally (i.e. not emitted remotely)
-events.emit("local-event", undefined, { excludePublish: true });
-
-// Emit an event only remotely (i.e. not emitted locally)
-events.emit("remote-event", undefined, { excludeLocal: true });
-
-// Unsubscribe manually
-// Note: events emitted locally will still be handled
-await events.unsubscribe();
 
 // Disconnect the subscriber
 // After calling this the instance is no longer usable
