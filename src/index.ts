@@ -13,7 +13,7 @@ export interface EventListener {
   (data: any): void
 }
 
-export class GlobalEvents extends EventEmitter {
+export default class GlobalEvents extends EventEmitter {
   public readonly prefix: string = 'global-'
 
   private readonly subscriptions = new Set<string>()
