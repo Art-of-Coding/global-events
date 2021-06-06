@@ -1,6 +1,6 @@
 {
   "name": "@art-of-coding/global-events",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Cross-system events for node.js",
   "main": "./dist/index.js",
   "author": "Michiel van der Velde <michiel@michielvdvelde.nl>",
