@@ -57,14 +57,27 @@ export default class GlobalEvents extends EventEmitter {
   public async subscribe(): Promise<void> {
     if (this.subscribed) return
 
+    if (this.subscriber.status !== 'ready') {
+      throw new Error('Subscriber not ready')
+    }
+
     await this.subscriber.psubscribe(`${this.prefix}events:*`)
     this.subscribed = true
   }
 
   public async unsubscribe(): Promise<void> {
     if (!this.subscribed) return
+    if (this.subscriber.status !== 'ready') return
 
     await this.subscriber.punsubscribe(`${this.prefix}events:*`)
     this.subscribed = false
+  }
+
+  public async disconnect(): Promise<void> {
+    if (this.subscribed) {
+      await this.unsubscribe()
+    }
+
+    this.subscriber.disconnect()
   }
 }
