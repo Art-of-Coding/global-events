@@ -34,9 +34,17 @@ export default class GlobalEvents extends EventEmitter {
     })
 
     if (typeof opts.autoSubscribe === 'undefined' || opts.autoSubscribe === true) {
-      this.subscribe().catch(() => {
-        super.emit('error', new Error('Unable to subscribe'))
-      })
+      if (this.subscriber.status === 'ready') {
+        this.subscribe().catch(() => {
+          super.emit('error', new Error('Unable to subscribe'))
+        })
+      } else {
+        this.subscriber.once('ready', () => {
+          this.subscribe().catch(() => {
+            super.emit('error', new Error('Unable to subscribe'))
+          })
+        })
+      }
     }
   }
 
