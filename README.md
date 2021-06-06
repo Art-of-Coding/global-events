@@ -30,19 +30,25 @@ import IORedis from "ioredis";
 import GlobalEvents from "@art-of-coding/global-events";
 
 // Create a non-dedicated connection
-// You can use this connection elsewhere if you want
+// You can use this connection elsewhere
 const connection = new IORedis();
 
 const events = new GlobalEvents({
   // Set the Redis connection
-  // This connection is duplicated internally to act
-  // as subscriber
+  // This connection is duplicated internally to act as subscriber
   connection,
   // An optional prefix
   prefix: "prefix:",
   // Optional msgpackr configuration
-  msgpackr: { structuredClone: true },
+  // See https://github.com/kriszyp/msgpackr#options
+  msgpackr: { useRecords: true },
+  // Auto-subscribe (defaults to true)
+  // If false, you need to call subscribe() yourself
+  autoSubscribe: true,
 });
+
+// Subscribe manually
+await events.subscribe();
 
 // Listen for an event
 events.on("expected-event", (data: MyDataInterface, origin: string) => {
@@ -61,6 +67,14 @@ events.emit("local-event", undefined, { excludePublish: true });
 
 // Emit an event only remotely (i.e. not emitted locally)
 events.emit("remote-event", undefined, { excludeLocal: true });
+
+// Unsubscribe manually
+// Note: events emitted locally will still be handled
+await events.unsubscribe();
+
+// Disconnect the subscriber
+// After calling this the instance is no longer usable
+await events.disconnect();
 ```
 
 ## License
