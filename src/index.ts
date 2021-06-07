@@ -9,8 +9,8 @@ export interface Options {
   msgpackr?: PackrOptions,
 }
 
-export interface EventListener {
-  (data: any): void
+export interface EventListener<T = any> {
+  (data: T): void
 }
 
 export default class GlobalEvents extends EventEmitter {
@@ -41,15 +41,15 @@ export default class GlobalEvents extends EventEmitter {
     })
   }
 
-  public on(event: string, ...listeners: EventListener[]): this {
+  public on<T = any>(event: string, ...listeners: EventListener<T>[]): this {
     return this.addListeners(event, ...listeners)
   }
 
-  public off(event: string, ...listeners: EventListener[]): this {
+  public off<T = any>(event: string, ...listeners: EventListener<T>[]): this {
     return this.removeListeners(event, ...listeners)
   }
 
-  public once(event: string, ...listeners: EventListener[]): this {
+  public once<T = any>(event: string, ...listeners: EventListener<T>[]): this {
     listeners.forEach(listener => {
       super.once(event, (data: any) => {
         listener(data)
@@ -68,11 +68,11 @@ export default class GlobalEvents extends EventEmitter {
     return this
   }
 
-  public prependListener(event: string, listener: EventListener): this {
+  public prependListener<T = any>(event: string, listener: EventListener<T>): this {
     return this.prependListeners(event, listener)
   }
 
-  public prependListeners(event: string, ...listeners: EventListener[]): this {
+  public prependListeners<T = any>(event: string, ...listeners: EventListener<T>[]): this {
     listeners.forEach(listener => super.prependListener(event, listener))
 
     if(!this.subscriptions.has(event)) {
@@ -83,11 +83,11 @@ export default class GlobalEvents extends EventEmitter {
     return this
   }
 
-  public prependOnceListener(event: string, listener: EventListener): this {
+  public prependOnceListener<T = any>(event: string, listener: EventListener<T>): this {
     return this.prependListeners(event, listener)
   }
 
-  public prependOnceListeners(event: string, ...listeners: EventListener[]): this {
+  public prependOnceListeners<T = any>(event: string, ...listeners: EventListener<T>[]): this {
     listeners.forEach(listener => {
       super.prependOnceListener(event, (data: any) => {
         listener(data)
@@ -106,11 +106,11 @@ export default class GlobalEvents extends EventEmitter {
     return this
   }
 
-  public addListener(event: string, listener: EventListener): this {
+  public addListener<T = any>(event: string, listener: EventListener<T>): this {
     return this.addListeners(event, listener)
   }
 
-  public addListeners(event: string, ...listeners: EventListener[]): this {
+  public addListeners<T = any>(event: string, ...listeners: EventListener<T>[]): this {
     listeners.forEach(listener => super.addListener(event, listener))
 
     if (!this.subscriptions.has(event)) {
