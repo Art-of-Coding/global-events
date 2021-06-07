@@ -155,13 +155,13 @@ export default class GlobalEvents extends EventEmitter {
     return this
   }
 
-  public emit(event: string, data: any): boolean {
+  public emit<T>(event: string, data?: T): boolean {
     this.emitAsync(event, data)
       .catch(() => super.emit('error', new Error('Unable to publish event')))
     return true
   }
 
-  public emitAsync(event: string, data: any): Promise<number> {
+  public emitAsync<T>(event: string, data?: T): Promise<number> {
     return this.connection.publishBuffer(`${this.prefix}events:${event}`, this.packr.pack(data ?? 1))
   }
 
