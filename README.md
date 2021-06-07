@@ -45,7 +45,7 @@ const events = new GlobalEvents({
 
 // Listen for an event
 // Will automatically subscribe to the event if no subscription is open yet
-events.on("expected-event", (data: MyDataInterface) => {
+events.on<MyDataInterface>("expected-event", (data) => {
   // `data` is the event data if the event had a data payload
 });
 
